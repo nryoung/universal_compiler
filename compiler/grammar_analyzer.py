@@ -35,22 +35,43 @@ class GrammarAnalyzer(object):
 
         return non_terminals
 
+    def get_terminals(self):
+        g = self.productions
+        t_list = []
+        terminals = set()
+
+        for prod in g:
+            sym = prod.split()
+            for s in sym:
+                if '<' in s or '>' in s:
+                    continue
+                else:
+                    t_list.append(s)
+        terminals.update(t_list)
+        return terminals
+
 
     def analyze(self):
         symbols = self.get_symbols()
         non_terminals = self.get_non_terminals()
+        terminals = self.get_terminals()
 
-        print "productions:"
+        print "\nproductions:"
         print "------------"
         for prod in self.productions:
             print prod
 
-        print "symbols:"
+        print "\nsymbols:"
         print "--------"
         for sym in symbols:
             print sym
 
-        print "non terminals:"
+        print "\nnon terminals:"
         print "--------------"
         for nt in non_terminals:
             print nt
+
+        print "\nterminals:"
+        print "----------"
+        for t in terminals:
+            print t
