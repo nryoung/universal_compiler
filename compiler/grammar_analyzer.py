@@ -59,11 +59,21 @@ class GrammarAnalyzer(object):
             rhs_list.append(sym[1])
         return rhs_list
 
+    def get_lhs(self):
+        g = self.productions
+        lhs_list = []
+
+        for prod in g:
+            sym = prod.split('->')
+            lhs_list.append(sym[0])
+        return lhs_list
+
     def analyze(self):
         symbols = self.get_symbols()
         non_terminals = self.get_non_terminals()
         terminals = self.get_terminals()
         rhs = self.get_rhs()
+        lhs = self.get_lhs()
 
         print "\nproductions:"
         print "------------"
@@ -88,4 +98,9 @@ class GrammarAnalyzer(object):
         print "\nRHS productions:"
         print "------------------"
         for p in rhs:
+            print p
+
+        print "\nLHS productions:"
+        print "------------------"
+        for p in lhs:
             print p
