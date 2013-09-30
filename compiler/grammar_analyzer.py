@@ -50,11 +50,20 @@ class GrammarAnalyzer(object):
         terminals.update(t_list)
         return terminals
 
+    def get_rhs(self):
+        g = self.productions
+        rhs_list = []
+
+        for prod in g:
+            sym = prod.split('->')
+            rhs_list.append(sym[1])
+        return rhs_list
 
     def analyze(self):
         symbols = self.get_symbols()
         non_terminals = self.get_non_terminals()
         terminals = self.get_terminals()
+        rhs = self.get_rhs()
 
         print "\nproductions:"
         print "------------"
@@ -75,3 +84,8 @@ class GrammarAnalyzer(object):
         print "----------"
         for t in terminals:
             print t
+
+        print "\nRHS productions:"
+        print "------------------"
+        for p in rhs:
+            print p
