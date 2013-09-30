@@ -13,7 +13,7 @@ Test Grammar Analyzer:
 
 - Where the `<file with productions>` is the path to the file containing micro language productions.
 - Example test files can be found in the `ext` dir.
-- Prints out list of scanned tokens to stdout in a list.
+- Prints out list of extracted production information to stdout in a list.
 
 Example test Grammar Analyzer command:
 --------------------------------------
