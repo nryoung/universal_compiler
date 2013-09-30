@@ -1,22 +1,22 @@
-<program>->begin <stmt list> end
-<stmt list>-><statement> <statement tail>
-<statement tail>-><stmt list>
-<statement tail>->lambda
-<statement>->Id :=<expression> ;
-<statement>->read(<id list>) ;
-<statement>->write(<expr list>) ;
-<id list>->Id <id tail>
-<id tail>->, <id list>
-<id tail>->lambda
-<expr list>-><expression> <expression tail>
-<expression tail>->, <expr list>
-<expression tail>->lambda
-<expression>-><primary> <primary tail>
-<primary tail>-><add op> <expression>
-<primary tail>->lambda
-<primary>->(<expression>)
-<primary>->Id
-<primary>->IntLiteral
-<add op>->+
-<add op>->-
-<system goal>-><program> $
+<program> -> begin <stmt_list> end
+<stmt_list> -> <statement> <statement_tail>
+<statement_tail> -> <stmt_list>
+<statement_tail> -> lambda
+<statement> -> Id := <expression> ;
+<statement> -> read ( <id_list> ) ;
+<statement> -> write ( <expr_list> ) ;
+<id_list> -> Id <id_tail>
+<id_tail> -> , <id_list>
+<id_tail> -> lambda
+<expr_list> -> <expression> <expression_tail>
+<expression_tail> -> , <expr_list>
+<expression_tail> -> lambda
+<expression> -> <primary> <primary_tail>
+<primary_tail> -> <add_op> <expression>
+<primary_tail> -> lambda
+<primary> -> ( <expression> )
+<primary> -> Id
+<primary> -> IntLiteral
+<add_op> -> +
+<add_op> -> -
+<system_goal> -> <program> $
