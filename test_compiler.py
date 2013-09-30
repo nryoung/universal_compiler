@@ -4,6 +4,11 @@ Depending on cmd line arguments it will run specific tests.
 """
 import argparse
 
+def test_grammar(program):
+    from compiler.grammar_analyzer import GrammarAnalyzer
+    g = GrammarAnalyzer(program)
+    g.analyze()
+
 def test_scanner(program):
     from compiler.compiler_errors import LexicalError
     from compiler.scanner import Scanner
@@ -38,5 +43,7 @@ if __name__ == '__main__':
     # Run the specific test depending on the args passed in
     if args.test_type == 'scanner':
         test_scanner(args.in_file)
+    if args.test_type == 'grammar':
+        test_grammar(args.in_file)
     else:
         parser.print_help()
