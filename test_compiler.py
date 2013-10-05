@@ -4,6 +4,11 @@ Depending on cmd line arguments it will run specific tests.
 """
 import argparse
 
+def test_predict(program):
+    from compiler.predict_generator import PredictGenerator
+    p = PredictGenerator(program)
+    p.generate()
+
 def test_grammar(program):
     from compiler.grammar_analyzer import GrammarAnalyzer
     g = GrammarAnalyzer(program)
@@ -34,7 +39,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('test_type', type=str,
                         help="""The component of the compiler to be tested.
-                             Options are: 'scanner' | 'parser' | 'unit' | 'compile'""")
+                             Options are: 'scanner' | 'parser' | 'unit' | 'compile' |
+                                          'grammar' | 'predict'""")
     parser.add_argument('in_file', type=argparse.FileType('r'),
                         help='Name of the input file.')
 
@@ -45,5 +51,7 @@ if __name__ == '__main__':
         test_scanner(args.in_file)
     if args.test_type == 'grammar':
         test_grammar(args.in_file)
+    if args.test_type == 'predict':
+        test_predict(args.in_file)
     else:
         parser.print_help()
