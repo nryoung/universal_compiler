@@ -73,7 +73,34 @@ class GrammarAnalyzer(object):
             rhs = self.get_rhs(p)
             if lhs == A and a == rhs[0]:
                 return True
-        return false
+        return False
+
+    def get_b(self, p):
+        # only return meaninful value if B is
+        # is a non terminal
+        sym = p.split('->')
+        rhs = sym[1].split()
+        try:
+            b = rhs[1]
+            if b in self.get_non_terminals():
+                return b
+            else:
+                return None
+        except IndexError:
+            return None
+
+    def get_y(self, b, p):
+        # Return the symbol found right after b, if any
+        sym = p.split('->')
+        rhs = sym[1].split()
+        k = len(rhs)
+        try:
+            for x in xrange(k):
+                if rhs[k] == b:
+                    return rhs[k + 1]
+        except IndexError:
+            return None
+
 
     def analyze(self):
         symbols = self.get_symbols()
