@@ -8,6 +8,7 @@ class PredictGenerator(object):
     def __init__(self, prods):
         self.ga = GrammarAnalyzer(prods)
         self.derives_lambda = {}
+        self.first_sets = {}
 
     def mark_lambda(self):
 
@@ -37,7 +38,7 @@ class PredictGenerator(object):
                     self.derives_lambda[lhs] = True
 
     def compute_first(self, x):
-        k = len(x)
+        k = len(x) - 1
         if k == 0:
             result = set(['lambda'])
         else:
@@ -51,6 +52,29 @@ class PredictGenerator(object):
             if i == k and 'lambda' in first_set(x[k]):
                 result = result.union(set(['lambda']))
         return result
+
+    def fill_first_set(self):
+        for A in self.ga.non_terminals:
+            if self.derives_lambda[A]:
+                self.first_sets[A] = set(['lambda'])
+            else:
+                self.first_sets[A] = set()
+
+        for a in self.ga.terminals:
+            self.first_sets[a] = set([a])
+            for A in self.ga.non_terminals:
+                if self.ga.matching(A, a):
+                    self.first_sets[A] = self.first_sets[A].union(set([a]))
+
+        changes = True
+        while changes:
+            changes = False
+            for p in self.ga.productions:
+                lhs = self.ga.get_lhs(p)
+                rhs_set = self.comput_first(self.ga.get_rhs(p)
+
+                self.first_sets[lhs] = self.first_sets[lhs].union(rhs)
+
 
     def generate(self):
         self.mark_lambda()
