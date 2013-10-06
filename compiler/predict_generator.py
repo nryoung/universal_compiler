@@ -9,6 +9,7 @@ class PredictGenerator(object):
         self.ga = GrammarAnalyzer(prods)
         self.derives_lambda = {}
         self.first_sets = {}
+        self.follow_sets = {}
 
     def mark_lambda(self):
 
@@ -23,7 +24,6 @@ class PredictGenerator(object):
         self.derives_lambda['lambda'] = True
 
         while changes:
-            print self.derives_lambda
             changes = False
             for p in self.ga.productions:
                 rhs_derives_lambda = True
@@ -38,19 +38,21 @@ class PredictGenerator(object):
                     self.derives_lambda[lhs] = True
 
     def compute_first(self, x):
-        k = len(x) - 1
+        result = set()
+        k = len(x)
         if k == 0:
             result = set(['lambda'])
         else:
-            result = first_set(x[0])
-            result.remove('lambda')
-            i = 0
-            while i < k and 'lambda' in first_set(x[i]):
-                i = i + 1
-                result = result.union(first_set(x[i]))
+            result = self.first_sets[x[0]]
+            if 'lambda' in result:
                 result.remove('lambda')
-            if i == k and 'lambda' in first_set(x[k]):
-                result = result.union(set(['lambda']))
+            i = 0
+            while i < (k-1) and 'lambda' in self.first_sets[x[i]]:
+                i = i + 1
+                result = result.union(self.first_sets[x[i]])
+                result.remove('lambda')
+        if i == (k-1) and 'lambda' in self.first_sets[x[k-1]]:
+            result = result.union(set(['lambda']))
         return result
 
     def fill_first_set(self):
@@ -67,15 +69,48 @@ class PredictGenerator(object):
                     self.first_sets[A] = self.first_sets[A].union(set([a]))
 
         changes = True
+        fs_begin = {}
         while changes:
+            fs_begin.update(self.first_sets)
             changes = False
             for p in self.ga.productions:
                 lhs = self.ga.get_lhs(p)
-                rhs_set = self.comput_first(self.ga.get_rhs(p)
+                rhs_set = self.compute_first(self.ga.get_rhs(p))
+                self.first_sets[lhs] = self.first_sets[lhs].union(rhs_set)
 
-                self.first_sets[lhs] = self.first_sets[lhs].union(rhs)
+            if fs_begin != self.first_sets:
+                changes = True
+
+    def fill_follow_set(self, start_sym):
+        for A in self.ga.non_terminals:
+            self.follow_sets[A]= set()
+
+        self.follow_sets[start_sym] = set(['lambda'])
+
+        changes = True
+        while changes:
+            changes = False
+            for p in self.ga.productions:
+                A = self.ga.get_lhs(p)
+                B = self.ga.get_b(p)
+                y = self.ga.get_y(b, p)
+                for nt in self.ga.get_rhs(p):
+                    if B == nt:
+                        self.follow_sets[B] = self.follow_sets[B].union(compute_first(y).remove('lambda'))
+                    if 'lambda' in compute_first(y):
+                        self.follow_sets[B] = self.follow_sets[B].union(self.follow_sets[A])
 
 
     def generate(self):
         self.mark_lambda()
-        print self.derives_lambda
+        print "Derives Lambda:"
+        print "---------------"
+        for sym, dl  in sorted(self.derives_lambda.items()):
+            print "%s : %s" % (sym, dl)
+
+        self.fill_first_set()
+        print "\nFirst Sets:"
+        print "-----------"
+        for sym, fs in sorted(self.first_sets.items()):
+            if sym in self.ga.non_terminals:
+                print "%s : {%s}" % (sym, ", ".join(f for f in fs))
