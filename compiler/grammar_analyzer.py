@@ -9,6 +9,8 @@ class GrammarAnalyzer(object):
         prods = grammar.readlines()
         self.productions = [ x.rstrip() for x in prods]
         self.symbols = self.get_symbols()
+        self.non_terminals = self.get_non_terminals()
+        self.terminals = self.get_terminals()
 
     def get_symbols(self):
         g = self.productions
@@ -64,6 +66,14 @@ class GrammarAnalyzer(object):
         sym = p.split('->')
         # split rhs in to individual tokens
         return sym[0].replace(' ', '')
+
+    def matching(self, A, a):
+        for p in self.productions:
+            lhs = self.get_lhs(p)
+            rhs = self.get_rhs(p)
+            if lhs == A and a == rhs[0]:
+                return True
+        return false
 
     def analyze(self):
         symbols = self.get_symbols()
