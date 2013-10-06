@@ -36,6 +36,21 @@ class PredictGenerator(object):
                     changes = True
                     self.derives_lambda[lhs] = True
 
+    def compute_first(self, x):
+        k = len(x)
+        if k == 0:
+            result = set(['lambda'])
+        else:
+            result = first_set(x[0])
+            result.remove('lambda')
+            i = 0
+            while i < k and 'lambda' in first_set(x[i]):
+                i = i + 1
+                result = result.union(first_set(x[i]))
+                result.remove('lambda')
+            if i == k and 'lambda' in first_set(x[k]):
+                result = result.union(set(['lambda']))
+        return result
 
     def generate(self):
         self.mark_lambda()
