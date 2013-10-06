@@ -6,6 +6,7 @@ class GrammarAnalyzer(object):
 
     def __init__(self, grammar):
         self.productions = grammar.readlines()
+        self.symbols = self.get_symbols()
 
     def get_symbols(self):
         g = self.productions
@@ -50,14 +51,13 @@ class GrammarAnalyzer(object):
         terminals.update(t_list)
         return terminals
 
-    def get_rhs(self):
-        g = self.productions
+    def get_rhs(self, p):
         rhs_list = []
 
-        for prod in g:
-            sym = prod.split('->')
-            rhs_list.append(sym[1])
-        return rhs_list
+        # split production in half
+        sym = p.split('->')
+        # split rhs in to individual tokens
+        return sym[1].split()
 
     def get_lhs(self):
         g = self.productions
