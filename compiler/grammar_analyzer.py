@@ -5,7 +5,9 @@ Grammer Analyzer implementation.
 class GrammarAnalyzer(object):
 
     def __init__(self, grammar):
-        self.productions = grammar.readlines()
+        # explicitly strip out \n chars
+        prods = grammar.readlines()
+        self.productions = [ x.rstrip() for x in prods]
         self.symbols = self.get_symbols()
 
     def get_symbols(self):
@@ -52,21 +54,16 @@ class GrammarAnalyzer(object):
         return terminals
 
     def get_rhs(self, p):
-        rhs_list = []
-
         # split production in half
         sym = p.split('->')
         # split rhs in to individual tokens
         return sym[1].split()
 
-    def get_lhs(self):
-        g = self.productions
-        lhs_list = []
-
-        for prod in g:
-            sym = prod.split('->')
-            lhs_list.append(sym[0])
-        return lhs_list
+    def get_lhs(self, p):
+        # split production in half
+        sym = p.split('->')
+        # split rhs in to individual tokens
+        return sym[0].replace(' ', '')
 
     def analyze(self):
         symbols = self.get_symbols()
