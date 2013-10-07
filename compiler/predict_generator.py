@@ -131,7 +131,7 @@ class PredictGenerator(object):
             else:
                 self.predict_sets[rhs].update(temp)
 
-    def generate(self):
+    def generate(self, start_sym):
         self.mark_lambda()
         print "Derives Lambda:"
         print "---------------"
@@ -147,7 +147,7 @@ class PredictGenerator(object):
 
         print "\nFollow Sets:"
         print "--------------:"
-        self.fill_follow_set('<system_goal>')
+        self.fill_follow_set(start_sym)
         for sym, fs, in sorted(self.follow_sets.items()):
             if sym in self.ga.non_terminals:
                 print"%s : {%s}" % (sym, ", ".join(f for f in fs))

@@ -4,10 +4,10 @@ Depending on cmd line arguments it will run specific tests.
 """
 import argparse
 
-def test_predict(program):
+def test_predict(program, start_sym):
     from compiler.predict_generator import PredictGenerator
     p = PredictGenerator(program)
-    p.generate()
+    p.generate(start_sym)
 
 def test_grammar(program):
     from compiler.grammar_analyzer import GrammarAnalyzer
@@ -44,6 +44,10 @@ if __name__ == '__main__':
     parser.add_argument('in_file', type=argparse.FileType('r'),
                         help='Name of the input file.')
 
+    parser.add_argument('--start_sym', type=str,
+                        default='<system_goal>',
+                        help='Name of start symbol for follow sets.')
+
     args = parser.parse_args()
 
     # Run the specific test depending on the args passed in
@@ -52,6 +56,6 @@ if __name__ == '__main__':
     if args.test_type == 'grammar':
         test_grammar(args.in_file)
     if args.test_type == 'predict':
-        test_predict(args.in_file)
+        test_predict(args.in_file, args.start_sym)
     else:
         parser.print_help()
