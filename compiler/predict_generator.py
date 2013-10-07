@@ -40,19 +40,19 @@ class PredictGenerator(object):
     def compute_first(self, x):
         result = set()
         k = len(x)
-        if k == 0:
+        if k == 0 or x[0] == 'lambda':
             result = set(['lambda'])
         else:
-            result = self.first_sets[x[0]]
+            result.update(self.first_sets[x[0]])
             if 'lambda' in result:
                 result.remove('lambda')
             i = 0
             while i < (k-1) and 'lambda' in self.first_sets[x[i]]:
                 i = i + 1
-                result = result.union(self.first_sets[x[i]])
+                result.update(result.union(self.first_sets[x[i]]))
                 result.remove('lambda')
-        if i == (k-1) and 'lambda' in self.first_sets[x[k-1]]:
-            result = result.union(set(['lambda']))
+            if i == (k-1) and 'lambda' in self.first_sets[x[k-1]]:
+                result.update(result.union(set(['lambda'])))
         return result
 
     def fill_first_set(self):
@@ -81,6 +81,8 @@ class PredictGenerator(object):
             if fs_begin != self.first_sets:
                 changes = True
 
+        # this gets eaten and I am not sure why
+
     def fill_follow_set(self, start_sym):
         for A in self.ga.non_terminals:
             self.follow_sets[A]= set()
@@ -88,17 +90,29 @@ class PredictGenerator(object):
         self.follow_sets[start_sym] = set(['lambda'])
 
         changes = True
+        fs_begin = {}
         while changes:
+            fs_begin.update(self.follow_sets)
             changes = False
             for p in self.ga.productions:
-                A = self.ga.get_lhs(p)
-                B = self.ga.get_b(p)
-                y = self.ga.get_y(b, p)
-                for nt in self.ga.get_rhs(p):
-                    if B == nt:
-                        self.follow_sets[B] = self.follow_sets[B].union(compute_first(y).remove('lambda'))
-                    if 'lambda' in compute_first(y):
-                        self.follow_sets[B] = self.follow_sets[B].union(self.follow_sets[A])
+                rhs = self.ga.get_rhs(p)
+
+                for i in range(len(rhs)):
+                    if rhs[i] in self.ga.non_terminals:
+                        if (i + 1) >= len(rhs):
+                            y = 'lambda'
+                        else:
+                            y = rhs[i+1]
+
+                        self.follow_sets[rhs[i]] = self.follow_sets[rhs[i]].union(self.compute_first([y]))
+                        if 'lambda' in self.follow_sets[rhs[i]]:
+                            self.follow_sets[rhs[i]].remove('lambda')
+
+
+                        if 'lambda' in self.compute_first([y]):
+                            self.follow_sets[rhs[i]] = self.follow_sets[rhs[i]].union(self.follow_sets[self.ga.get_lhs(p)])
+            if fs_begin != self.follow_sets:
+                changes = True
 
 
     def generate(self):
@@ -114,3 +128,11 @@ class PredictGenerator(object):
         for sym, fs in sorted(self.first_sets.items()):
             if sym in self.ga.non_terminals:
                 print "%s : {%s}" % (sym, ", ".join(f for f in fs))
+
+        print "\nFollow Sets:"
+        print "--------------:"
+        self.fill_follow_set('<system_goal>')
+        for sym, fs, in sorted(self.follow_sets.items()):
+            if sym in self.ga.non_terminals:
+                print"%s : {%s}" % (sym, ", ".join(f for f in fs))
+
