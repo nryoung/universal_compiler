@@ -6,6 +6,22 @@ Requirements
 - Python version 2.7+
 
 
+Test Predict Generator:
+-----------------------
+
+`$ python test_compiler.py predict <file with productions> --start_sym=<start symbol>`
+
+- Where the `<file with productions>` is the path to the file containing micro language productions.
+- Example test files can be found in the `ext` dir.
+- If `--start_sym` is not specified it will default to `<system_goal>`
+- Prints out Derives Lambda, First Sets, Follow Sets, and Predict Sets for each production to std out.
+
+Example test Predict Generator command:
+---------------------------------------
+
+`$ python test_compiler.py predict ext/test_predict2 --start_sym='<system_goal>'`
+
+
 Test Grammar Analyzer:
 ----------------------
 
