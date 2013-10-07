@@ -10,6 +10,7 @@ class PredictGenerator(object):
         self.derives_lambda = {}
         self.first_sets = {}
         self.follow_sets = {}
+        self.predict_sets = {}
 
     def mark_lambda(self):
 
@@ -114,6 +115,21 @@ class PredictGenerator(object):
             if fs_begin != self.follow_sets:
                 changes = True
 
+    def fill_predict_set(self):
+        for p in self.ga.productions:
+            temp = set()
+            rhs = " ".join(self.ga.get_rhs(p))
+
+            self.predict_sets[rhs] = set()
+
+            temp.update(self.compute_first(self.ga.get_rhs(p)))
+
+            if rhs == 'lambda':
+                self.predict_sets[rhs]
+            elif 'lambda' in temp:
+                self.predict_sets[rhs].update(self.follow_sets[rhs])
+            else:
+                self.predict_sets[rhs].update(temp)
 
     def generate(self):
         self.mark_lambda()
@@ -136,3 +152,9 @@ class PredictGenerator(object):
             if sym in self.ga.non_terminals:
                 print"%s : {%s}" % (sym, ", ".join(f for f in fs))
 
+
+        print "\nPredict Sets:"
+        print "---------------"
+        self.fill_predict_set()
+        for sym, fs in sorted(self.predict_sets.items()):
+            print "%s : {%s}" % (sym, ", ".join(f for f in fs))
