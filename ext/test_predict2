@@ -1,0 +1,22 @@
+<program> -> begin <stmt_list> end
+<stmt_list> -> <statement> <stmt_tail>
+<stmt_tail> -> <stmt_list>
+<stmt_tail> -> lambda
+<statement> -> Id := <expression> ;
+<statement> -> read ( <id_list> ) ;
+<statement> -> write ( <expr_list> ) ;
+<id_list> -> Id <id_tail>
+<id_tail> -> , <id_list>
+<id_tail> -> lambda
+<expr_list> -> <expression> <expr_tail>
+<expr_tail> -> , <expr_list>
+<expr_tail> -> lambda
+<expression> -> <primary> <primary_tail>
+<primary_tail> -> <add_op> <expression>
+<primary_tail> -> lambda
+<primary> -> ( <expression> )
+<primary> -> Id
+<primary> -> IntLiteral
+<add_op> -> +
+<add_op> -> -
+<system_goal> -> <program> $
