@@ -4,6 +4,14 @@ Depending on cmd line arguments it will run specific tests.
 """
 import argparse
 
+def test_table_generate(program, start_sym):
+    from compiler.predict_generator import PredictGenerator
+    p = PredictGenerator(program)
+    p.generate_predict_table(start_sym)
+
+    for entry in p.predict_tbl:
+        print entry
+
 def test_predict(program, start_sym):
     from compiler.predict_generator import PredictGenerator
     p = PredictGenerator(program)
@@ -40,7 +48,7 @@ if __name__ == '__main__':
     parser.add_argument('test_type', type=str,
                         help="""The component of the compiler to be tested.
                              Options are: 'scanner' | 'parser' | 'unit' | 'compile' |
-                                          'grammar' | 'predict'""")
+                                          'grammar' | 'predict' | 'table_generate'""")
     parser.add_argument('in_file', type=argparse.FileType('r'),
                         help='Name of the input file.')
 
@@ -57,5 +65,8 @@ if __name__ == '__main__':
         test_grammar(args.in_file)
     if args.test_type == 'predict':
         test_predict(args.in_file, args.start_sym)
+    if args.test_type == 'table_generate':
+        test_table_generate(args.in_file, args.start_sym)
     else:
-        parser.print_help()
+        pass
+        #parser.print_help()
