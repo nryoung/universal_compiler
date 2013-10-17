@@ -8,9 +8,26 @@ def test_table_generate(program, start_sym):
     from compiler.predict_generator import PredictGenerator
     p = PredictGenerator(program)
     p.generate_predict_table(start_sym)
+    # first create a our columns string
+    columns = "                "
+    for elem in p.predict_tbl[0][1:]:
+        columns += "%8s" % elem
 
-    for entry in p.predict_tbl:
-        print entry
+    rows = []
+    for row in p.predict_tbl[1:]:
+        s = "%s\t" % row[0]
+        for elem in row[1:]:
+            s += "%8s" % elem
+        rows.append(s)
+
+    print columns
+    for r in rows:
+        print r
+        print "-" * 130
+
+    print "Just in case the table above is not formatted correctly above here is a unformatted dump of the table:"
+    for e in p.predict_tbl:
+        print e
 
 def test_predict(program, start_sym):
     from compiler.predict_generator import PredictGenerator

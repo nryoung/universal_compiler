@@ -147,20 +147,28 @@ class PredictGenerator(object):
         for p in self.ga.productions:
             p_num += 1
 
-            # first we create the row and update our table
-            row = [' '] * len(self.predict_tbl[0])
+            # check to see if the row exist
+            row_match = False
             lhs = self.ga.get_lhs(p)
-            row[0] = lhs
-            self.predict_tbl.extend([row])
+            rhs = " ".join(self.ga.get_rhs(p))
+            for r in self.predict_tbl:
+                if lhs == r[0]:
+                    row_match = True
+
+            # first we create the row and update our table
+            if row_match == False:
+                row = [' '] * len(self.predict_tbl[0])
+                row[0] = lhs
+                self.predict_tbl.extend([row])
 
             # now we match cols and update
             # iterate through first_sets and look for matches
-            tks = [x for x in self.first_sets[lhs]]
+            tks = [x for x in self.predict_sets[rhs]]
 
             # test for lambda, if present we need to add predict set
-            if 'lambda' in tks:
-                tks.remove('lambda')
+            if not tks:
                 tks.extend([ x for x in self.follow_sets[lhs]])
+
 
             for t in tks:
                 self.predict_tbl[-1][col_matching[t]] = p_num
