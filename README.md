@@ -6,6 +6,23 @@ Requirements
 - Python version 2.7+
 
 
+Test Predict Table Generator:
+-----------------------------
+
+`$ python test_compiler.py table_generate <file with productions> --start_sym=<start symbol>`
+
+- Where the `<file with productions>` is the path to the file containing micro language productions.
+- Example test files can be found in the `ext` dir.
+- If `--start_sym` is not specified it will default to `<system_goal>`
+- Prints out Predict Table as derived from the Predict and Follow sets found earlier.
+- NOTE: you may want to pipe the output of this command to `less`
+
+Example test Predict Table Generator command:
+---------------------------------------------
+
+`$ python test_compiler.py table_generate ext/test_table_gen --start_sym='<system_goal>'`
+
+
 Test Predict Generator:
 -----------------------
 
