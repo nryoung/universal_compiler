@@ -11,6 +11,7 @@ class PredictGenerator(object):
         self.first_sets = {}
         self.follow_sets = {}
         self.predict_sets = {}
+        self.col_matching = {}
         self.predict_tbl = [[' ']]
 
     def mark_lambda(self):
@@ -135,11 +136,11 @@ class PredictGenerator(object):
     def _gen_predict_table(self):
         # first create our columns
         self.predict_tbl[0].extend([t for t in self.ga.get_terminals() if t != 'lambda'])
-        col_matching = {}
+        self.col_matching = {}
         i = 0
         # ugh, iterate through to get column number for corresponding symbols
         for t in self.predict_tbl[0]:
-            col_matching[t] = i
+            self.col_matching[t] = i
             i += 1
 
         # we then iterate through our productions
@@ -171,7 +172,7 @@ class PredictGenerator(object):
 
 
             for t in tks:
-                self.predict_tbl[-1][col_matching[t]] = p_num
+                self.predict_tbl[-1][self.col_matching[t]] = p_num
 
 
 
