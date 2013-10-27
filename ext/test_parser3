@@ -1,0 +1,5 @@
+BEGIN
+READ(A, B);
+D := A - B; -- Take the diff
+WRITE(D);
+END$
