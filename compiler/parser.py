@@ -3,6 +3,7 @@ Parser implementation.
 """
 from .scanner import Scanner
 from .predict_generator import PredictGenerator
+from .compiler_errors import SyntaxError
 
 class Parser(object):
 
@@ -74,8 +75,7 @@ class Parser(object):
                             new_X = self.pg.ga.productions[row[col_num] - 1]
                             new_X = self.pg.ga.get_rhs(new_X)
                         else:
-                            print "RAISE SYNTAX ERROR HERE!"
-                            return
+                            raise SyntaxError
 
                 self._display_row(a, pn=predict_num)
                 # pop the items of the stack and replace them with new stuff
@@ -90,5 +90,4 @@ class Parser(object):
                     self.stack.pop()
                     a = self.scanner.scan()
                 else:
-                    print "RAISE SYTNAX ERROR"
-                    return
+                    raise SyntaxError
