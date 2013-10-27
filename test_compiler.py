@@ -8,6 +8,7 @@ def test_parser_driver(program, grammar, start_sym):
     from compiler.parser import Parser
 
     p = Parser(program, grammar, start_sym)
+    p.ll_driver()
 
 def test_table_generate(program, start_sym):
     from compiler.predict_generator import PredictGenerator
