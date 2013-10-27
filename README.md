@@ -6,6 +6,24 @@ Requirements
 - Python version 2.7+
 
 
+Test Parser Driver:
+-------------------
+
+`$ python test_compiler.py parser_driver <file with micro_lang> --grammar=<file with productions> --start_sym=<start symbol>`
+
+- Where the `<file with micro_lang>` is the path to the file containing micro language.
+- Example test files can be found in the `ext` dir.
+- If `--grammar` is not specified it will default to the productions contained at `ext/test_grammar1`
+- If `--start_sym` is not specified it will default to `<system_goal>`
+- Prints out status of Parser Driver as it consumes the input, including the stack, parser action, and remaining input.
+- NOTE: you may want to pipe the output of this command to `less`
+
+Example test Parser Driver command:
+-----------------------------------
+
+`$ python test_compiler.py parser_driver ext/test_parser1 --grammar=ext/test_grammar1 --start_sym='<system_goal>'`
+
+
 Test Predict Table Generator:
 -----------------------------
 
