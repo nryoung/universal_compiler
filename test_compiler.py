@@ -4,8 +4,10 @@ Depending on cmd line arguments it will run specific tests.
 """
 import argparse
 
-def test_parser_driver(program, start_sym):
-    pass
+def test_parser_driver(program, grammar, start_sym):
+    from compiler.parser import Parser
+
+    p = Parser(program, grammar, start_sym)
 
 def test_table_generate(program, start_sym):
     from compiler.predict_generator import PredictGenerator
@@ -73,6 +75,10 @@ if __name__ == '__main__':
     parser.add_argument('in_file', type=argparse.FileType('r'),
                         help='Name of the input file.')
 
+    parser.add_argument('--grammar', type=argparse.FileType('r'),
+                        default='ext/test_grammar1',
+                        help='File with grammar productions to be used.')
+
     parser.add_argument('--start_sym', type=str,
                         default='<system_goal>',
                         help='Name of start symbol for follow sets.')
@@ -89,7 +95,7 @@ if __name__ == '__main__':
     if args.test_type == 'table_generate':
         test_table_generate(args.in_file, args.start_sym)
     if args.test_type == 'parser_driver':
-        test_parser_driver(args.in_file, args.start_sym)
+        test_parser_driver(args.in_file, args.grammar, args.start_sym)
     else:
         pass
         #parser.print_help()
