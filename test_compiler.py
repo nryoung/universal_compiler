@@ -4,6 +4,9 @@ Depending on cmd line arguments it will run specific tests.
 """
 import argparse
 
+def test_compile(*args):
+    pass
+
 def test_parser_driver(program, grammar, start_sym):
     from compiler.parser import Parser
 
@@ -97,6 +100,8 @@ if __name__ == '__main__':
         test_table_generate(args.in_file, args.start_sym)
     if args.test_type == 'parser_driver':
         test_parser_driver(args.in_file, args.grammar, args.start_sym)
+    if args.test_type == 'compile':
+        test_compile(args.in_file, args.grammar, args.start_sym)
     else:
         pass
         #parser.print_help()
