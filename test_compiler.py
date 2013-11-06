@@ -92,16 +92,15 @@ if __name__ == '__main__':
     # Run the specific test depending on the args passed in
     if args.test_type == 'scanner':
         test_scanner(args.in_file)
-    if args.test_type == 'grammar':
+    elif args.test_type == 'grammar':
         test_grammar(args.in_file)
-    if args.test_type == 'predict':
+    elif args.test_type == 'predict':
         test_predict(args.in_file, args.start_sym)
-    if args.test_type == 'table_generate':
+    elif args.test_type == 'table_generate':
         test_table_generate(args.in_file, args.start_sym)
-    if args.test_type == 'parser_driver':
+    elif args.test_type == 'parser_driver':
         test_parser_driver(args.in_file, args.grammar, args.start_sym)
-    if args.test_type == 'compile':
+    elif args.test_type == 'compile':
         test_compile(args.in_file, args.grammar, args.start_sym)
     else:
-        pass
-        #parser.print_help()
+        parser.print_help()
