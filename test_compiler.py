@@ -72,10 +72,9 @@ if __name__ == '__main__':
     # Create cmd line object parser
     parser = argparse.ArgumentParser()
     parser.add_argument('test_type', type=str,
-                        help="""The component of the compiler to be tested.
-                             Options are:
-                             'scanner' | 'parser' | 'unit' | 'compile' | 'grammar' |
-                             'predict' | 'table_generate' | 'parser_driver'""")
+                        help="""The component of the compiler to be tested:
+                             'scanner', 'parser', 'unit', 'compile', 'grammar',
+                             'predict', 'table_generate', 'parser_driver'""")
     parser.add_argument('in_file', type=argparse.FileType('r'),
                         help='Name of the input file.')
 
