@@ -46,7 +46,6 @@ class Parser(object):
 
         while self.stack:
             X = self.stack[-1]
-            #print "X: %s, a: %s" % (X, a)
 
             # Unfortunately the predict table does not account for empty space
             if a == 'EmptySpace' or a == 'Comment':
