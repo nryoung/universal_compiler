@@ -135,7 +135,7 @@ class PredictGenerator(object):
 
     def _gen_predict_table(self):
         # first create our columns
-        self.predict_tbl[0].extend([t for t in self.ga.get_terminals() if t != 'lambda'])
+        self.predict_tbl[0].extend([t for t in self.ga.get_terminals() if t != 'lambda' or '#' not in t])
         self.col_matching = {}
         i = 0
         # ugh, iterate through to get column number for corresponding symbols
