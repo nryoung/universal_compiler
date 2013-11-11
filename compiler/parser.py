@@ -12,12 +12,12 @@ class Parser(object):
         self.pg = PredictGenerator(grammar)
         self.start_sym = start_sym
         self.stack = []
+        self.ss_stack = []
         self.pg.generate_predict_table(self.start_sym)
 
         self.rev_tk_mapping = { 'Id': 'Id', 'IntLiteral': 'IntLiteral', 'PlusOp': '+',
                               'AssignOp': ':=', 'Comma': ',', 'SemiColon': ';',
-                              'LParen': '(', 'RParen': ')', 'MinusOp': '-', 'EofSym': '$',
-                              'BeginSym': 'begin', 'EndSym': 'end', 'ReadSym': 'read',
+                              'LParen': '(', 'RParen': ')', 'MinusOp': '-', 'EofSym': '$', 'BeginSym': 'begin', 'EndSym': 'end', 'ReadSym': 'read',
                               'WriteSym': 'write', 'EmptySpace': ' ', 'Comment': ''
                               }
 
@@ -90,3 +90,89 @@ class Parser(object):
                     a = self.scanner.scan()
                 else:
                     raise SyntaxError
+
+    def ll_compiler(self):
+        # Note, somehow ge the value of:
+        # LeftIndex, RightIndex, CurrentIndex, TopIndex
+        a = self.scanner.scan()
+
+        # push start symbol on both stacks
+        self.stack.append(self.start_sym)
+        self.ss_stack.append(self.start_sym)
+        left_idx, right_idx = 0
+        current_idx = 1
+        top_idx = 2
+
+        # now we start our loop
+        while self.stack:
+            X = self.stack[-1]
+
+            if a == 'EmptySpace' or a == 'Comment':
+                a = self.scanner.scan()
+                continue
+
+            if X == 'lambda':
+                self.stack.pop()
+                continue
+
+            # X is a non-terminal we have to process it
+            if X in self.pg.ga.get_non_terminals():
+                col = self.rev_tk_mapping[a]
+                col_num = self.pg.col_matching[col]
+
+                x = self.stack.pop()
+                # Push EOP, a tuple in this case, on to the parse stack
+                self.stack.append((left_idx, right_idx, current_idx, top_idx))
+
+                # Now we need to grab the prodcutions Y_m...Y_1 and push them on
+                # both stacks.
+                new_X = None
+                perdict_num = None
+                for row in self.predict_tbl:
+                    if X == row[0]
+                        if row[col_num] != ' ':
+                            predict_num = row[col_num]
+                            new_X = self.pg.ga.productions[row[col_num] - 1]
+                            new_X = self.pg.ga.get_rhs(new_X)
+                        else:
+                            raise SyntaxError
+
+                for x in new_X[::-1]:
+                    # only push non action symbols on the SS stack
+                    if '#' not in x:
+                        self.ss_stack.append(x)
+                    # Push everything on the Parse stack
+                    self.stack.append(x)
+
+                left_idx = current_idx
+                right_idx = top_idx
+                current_idx = right_idx
+                top_idx = top_idx + (len(new_X) - 1)
+
+
+
+            # X is terminal
+            elif X in self.pg.ga.get_terminals():
+                if X == self.rev_tk_mapping[a]:
+                    self.ss_stack[current_id] = self.rev_tk_mapping[a]
+                    self.stack.pop()
+                    a = self.scanner.scan()
+                    current_idx += 1
+                else:
+                    raise SyntaxError
+
+            # X is EOP
+            elif type(X) == tuple:
+                left_idx = X[0]
+                right_idx = X[1]
+                current_idx = X[2]
+                top_idx = X[3]
+
+                current_idx += 1
+
+                self.scanner.pop()
+
+          # X is action symbol
+            else:
+                self.scanner.pop()
+                # call semantic record here, somehow.
