@@ -50,6 +50,8 @@ class GrammarAnalyzer(object):
             for s in sym:
                 if '<' in s or '>' in s:
                     continue
+                elif '#' in s:
+                    continue
                 else:
                     t_list.append(s)
         terminals.update(t_list)
@@ -59,7 +61,8 @@ class GrammarAnalyzer(object):
         # split production in half
         sym = p.split('->')
         # split rhs in to individual tokens
-        return sym[1].split()
+        rhs = sym[1].split()
+        return [ s for s in rhs if '#' not in s]
 
     def get_lhs(self, p):
         # split production in half
