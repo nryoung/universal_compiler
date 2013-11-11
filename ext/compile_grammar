@@ -2,7 +2,7 @@
 <stmt_list> -> <statement> <stmt_tail>
 <stmt_tail> -> <stmt_list>
 <stmt_tail> -> lambda
-<statement> -> <ident> := <expression> ; #Assign($1, $3)
+<statement> -> <ident> := <expression> ; #Assign($1,$3)
 <statement> -> read ( <id_list> ) ;
 <statement> -> write ( <expr_list> ) ;
 <id_list> -> <ident> #ReadId($1) <id_tail>
@@ -11,11 +11,11 @@
 <expr_list> -> <expression> #WriteExpr($1) <expr_tail>
 <expr_tail> -> , <expr_list>
 <expr_tail> -> lambda
-<expression> -> <primary> #Copy($1, $2) <primary_tail> #Copy($2, $$)
-<primary_tail> -> <add_op> <expression> #GenInfix($$, $1, $2, $$)
+<expression> -> <primary> #Copy($1,$2) <primary_tail> #Copy($2,$$)
+<primary_tail> -> <add_op> <expression> #GenInfix($$,$1,$2,$$)
 <primary_tail> -> lambda
-<primary> -> ( <expression> ) #Copy($2, $$)
-<primary> -> <ident> #Copy($1, $$)
+<primary> -> ( <expression> ) #Copy($2,$$)
+<primary> -> <ident> #Copy($1,$$)
 <primary> -> IntLiteral #ProcessLiteral($$)
 <add_op> -> + #ProcessOp($$)
 <add_op> -> - #ProcessOp($$)
