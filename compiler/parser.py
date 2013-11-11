@@ -16,9 +16,10 @@ class Parser(object):
         self.pg.generate_predict_table(self.start_sym)
 
         self.rev_tk_mapping = { 'Id': 'Id', 'IntLiteral': 'IntLiteral', 'PlusOp': '+',
-                              'AssignOp': ':=', 'Comma': ',', 'SemiColon': ';',
-                              'LParen': '(', 'RParen': ')', 'MinusOp': '-', 'EofSym': '$', 'BeginSym': 'begin', 'EndSym': 'end', 'ReadSym': 'read',
-                              'WriteSym': 'write', 'EmptySpace': ' ', 'Comment': ''
+                                'AssignOp': ':=', 'Comma': ',', 'SemiColon': ';',
+                                'LParen': '(', 'RParen': ')', 'MinusOp': '-', 'EofSym': '$',
+                                'BeginSym': 'begin', 'EndSym': 'end', 'ReadSym': 'read',
+                                'WriteSym': 'write', 'EmptySpace': ' ', 'Comment': ''
                               }
 
 
