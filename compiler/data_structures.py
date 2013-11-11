@@ -5,6 +5,7 @@ Data structures to be used in the universal compiler.
 from compiler_errors import OpError
 from compiler_errors import LiteralError
 from compiler_errors import IdError
+from compiler_errors import SyntaxError
 
 class OpRec(object):
 
@@ -57,3 +58,14 @@ class ExprRec(object):
             self._name = expr
         else:
             raise IdError("Invalid Id name: '%s'" % expr)
+
+def sem_rec(s, e=None, l=None):
+    op_rec_vals = ('-', '+', None)
+    if s in op_rec_vals:
+        return OpRec(s)
+    elif e:
+        return ExprRec(s, expr=e)
+    elif l:
+        return ExprRec(s, literal=l)
+    else:
+        raise SyntaxError(s)
