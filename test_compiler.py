@@ -5,7 +5,7 @@ Depending on cmd line arguments it will run specific tests.
 import argparse
 
 def test_compile(program, grammar, start_sym):
-    import Parser
+    from compiler.parser import Parser
 
     p = Parser(program, grammar, start_sym)
     p.ll_compiler()
@@ -77,7 +77,7 @@ if __name__ == '__main__':
     parser.add_argument('test_type', type=str,
                         help="""The component of the compiler to be tested:
                              'scanner', 'parser', 'unit', 'compile', 'grammar',
-                             'predict', 'table_generate', 'parser_driver'""")
+                             'predict', 'table_generate', 'parser_driver', 'compile'""")
     parser.add_argument('in_file', type=argparse.FileType('r'),
                         help='Name of the input file.')
 
