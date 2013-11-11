@@ -7,8 +7,12 @@ import argparse
 def test_compile(program, grammar, start_sym):
     from compiler.parser import Parser
 
-    p = Parser(program, grammar, start_sym)
-    p.ll_compiler()
+    try:
+        p = Parser(program, grammar, start_sym)
+        p.ll_compiler()
+    except Exception as e:
+        print "Exception: %s" % e
+        print "Bad char: %s" % e.err
 
 def test_parser_driver(program, grammar, start_sym):
     from compiler.parser import Parser
