@@ -75,7 +75,7 @@ class Parser(object):
                             new_X = self.pg.ga.productions[row[col_num] - 1]
                             new_X = self.pg.ga.get_rhs(new_X)
                         else:
-                            raise SyntaxError
+                            raise SyntaxError(a)
 
                 self._display_row(a, pn=predict_num)
                 # pop the items of the stack and replace them with new stuff
@@ -90,7 +90,7 @@ class Parser(object):
                     self.stack.pop()
                     a = self.scanner.scan()
                 else:
-                    raise SyntaxError
+                    raise SyntaxError(a)
 
     def ll_compiler(self):
         # Note, somehow ge the value of:
@@ -100,7 +100,8 @@ class Parser(object):
         # push start symbol on both stacks
         self.stack.append(self.start_sym)
         self.ss_stack.append(self.start_sym)
-        left_idx, right_idx = 0
+        left_idx = 0
+        right_idx = 0
         current_idx = 1
         top_idx = 2
 
@@ -129,14 +130,14 @@ class Parser(object):
                 # both stacks.
                 new_X = None
                 perdict_num = None
-                for row in self.predict_tbl:
-                    if X == row[0]
+                for row in self.pg.predict_tbl:
+                    if X == row[0]:
                         if row[col_num] != ' ':
                             predict_num = row[col_num]
                             new_X = self.pg.ga.productions[row[col_num] - 1]
                             new_X = self.pg.ga.get_rhs(new_X)
                         else:
-                            raise SyntaxError
+                            raise SyntaxError(a)
 
                 for x in new_X[::-1]:
                     # only push non action symbols on the SS stack
@@ -160,7 +161,7 @@ class Parser(object):
                     a = self.scanner.scan()
                     current_idx += 1
                 else:
-                    raise SyntaxError
+                    raise SyntaxError(a)
 
             # X is EOP
             elif type(X) == tuple:
