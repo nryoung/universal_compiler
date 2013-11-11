@@ -4,8 +4,11 @@ Depending on cmd line arguments it will run specific tests.
 """
 import argparse
 
-def test_compile(*args):
-    pass
+def test_compile(program, grammar, start_sym):
+    import Parser
+
+    p = Parser(program, grammar, start_sym)
+    p.ll_compiler()
 
 def test_parser_driver(program, grammar, start_sym):
     from compiler.parser import Parser
