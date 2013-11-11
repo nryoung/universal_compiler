@@ -57,12 +57,15 @@ class GrammarAnalyzer(object):
         terminals.update(t_list)
         return terminals
 
-    def get_rhs(self, p):
+    def get_rhs(self, p, action=None):
         # split production in half
         sym = p.split('->')
         # split rhs in to individual tokens
-        rhs = sym[1].split()
-        return [ s for s in rhs if '#' not in s]
+        if action:
+            return sym[1].split()
+        else:
+            rhs = sym[1].split()
+            return [ s for s in rhs if '#' not in s]
 
     def get_lhs(self, p):
         # split production in half
