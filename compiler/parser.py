@@ -13,6 +13,7 @@ class Parser(object):
         self.start_sym = start_sym
         self.stack = []
         self.ss_stack = []
+        self.gen_code = ''
         self.pg.generate_predict_table(self.start_sym)
 
         self.rev_tk_mapping = { 'Id': 'Id', 'IntLiteral': 'IntLiteral', 'PlusOp': '+',
@@ -40,6 +41,19 @@ class Parser(object):
             print "Parse Stack:"
             print self.stack[::-1]
             print '-' * 80
+
+    def _display_compile(self, idx):
+        print "Remaining Input:"
+        print self.scanner.micro_lang.replace('\n', '')
+        print "Parse Stack:"
+        print self.stack[::-1]
+        print "Semantic Stack:"
+        print self.ss_stack[::-1]
+        print "Generated Code:"
+        print self.gen_code
+        print "Indices:"
+        print "(%s, %s, %s, %s)" % (idx[0], idx[1], idx[2], idx[3])
+        print '-' * 80
 
     def ll_driver(self):
         self.stack.append(self.start_sym)
@@ -102,12 +116,15 @@ class Parser(object):
         self.ss_stack.append(self.start_sym)
         left_idx = 0
         right_idx = 0
-        current_idx = 1
-        top_idx = 2
+        current_idx = 0
+        top_idx = 1
 
         # now we start our loop
         while self.stack:
             X = self.stack[-1]
+
+            print "X: %s" % str(X)
+            print "a: %s" % a
 
             if a == 'EmptySpace' or a == 'Comment':
                 a = self.scanner.scan()
@@ -117,12 +134,17 @@ class Parser(object):
                 self.stack.pop()
                 continue
 
+            self._display_compile((left_idx, right_idx, current_idx, top_idx))
             # X is a non-terminal we have to process it
             if X in self.pg.ga.get_non_terminals():
+                print "Non Terminals"
                 col = self.rev_tk_mapping[a]
+                print "Col: %s" % col
+                print self.pg.col_matching
                 col_num = self.pg.col_matching[col]
+                print "Col_num: %s" % col_num
 
-                x = self.stack.pop()
+                self.stack.pop()
                 # Push EOP, a tuple in this case, on to the parse stack
                 self.stack.append((left_idx, right_idx, current_idx, top_idx))
 
@@ -135,8 +157,10 @@ class Parser(object):
                         if row[col_num] != ' ':
                             predict_num = row[col_num]
                             new_X = self.pg.ga.productions[row[col_num] - 1]
-                            new_X = self.pg.ga.get_rhs(new_X)
+                            new_X = self.pg.ga.get_rhs(new_X, action=True)
                         else:
+                            print "X: %s" % X
+                            print "In first else, where it is a non term and not matched."
                             raise SyntaxError(a)
 
                 for x in new_X[::-1]:
@@ -155,16 +179,19 @@ class Parser(object):
 
             # X is terminal
             elif X in self.pg.ga.get_terminals():
+                print "Terminal"
                 if X == self.rev_tk_mapping[a]:
-                    self.ss_stack[current_id] = self.rev_tk_mapping[a]
+                    self.ss_stack[current_idx] = '[%s]' % self.rev_tk_mapping[a]
                     self.stack.pop()
                     a = self.scanner.scan()
                     current_idx += 1
                 else:
+                    print "In second else, where it is a terminal and not matched"
                     raise SyntaxError(a)
 
             # X is EOP
             elif type(X) == tuple:
+                print "EOP"
                 left_idx = X[0]
                 right_idx = X[1]
                 current_idx = X[2]
@@ -172,9 +199,10 @@ class Parser(object):
 
                 current_idx += 1
 
-                self.scanner.pop()
+                self.stack.pop()
 
-          # X is action symbol
+            # X is action symbol
             else:
-                self.scanner.pop()
+                print "X is action symbol: %s" % X
+                self.stack.pop()
                 # call semantic record here, somehow.
