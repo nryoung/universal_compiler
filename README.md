@@ -6,6 +6,24 @@ Requirements
 - Python version 2.7+
 
 
+Test Compile:
+-------------
+
+`$ python test_compiler.py compile <file with micro_lang> --grammar=<file with productions> --start_sym=<start symbol>`
+
+- Where the `<file with micro_lang>` is the path to the file containing micro language.
+- Example test files can be found in the `ext` dir.
+- If `--grammar` is not specified it will default to the productions contained at `ext/compile_grammar`
+- If `--start_sym` is not specified it will default to `<system_goal>`
+- Prints out status of Compiler as it consumes the input, including the parse stack, semantic stack, remaining input, and generated code.
+- NOTE: you may want to pipe the output of this command to `less`
+
+Example Compile command:
+------------------------
+
+`$ python test_compiler.py compile ext/test_compile1 --grammar=ext/compile_grammar`
+
+
 Test Parser Driver:
 -------------------
 
