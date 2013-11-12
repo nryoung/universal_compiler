@@ -2,6 +2,7 @@
 Auxiliary Routines for the universal compiler.
 """
 import sys
+from .compiler.data_structures import OpRec, ExprRec, sem_rec
 
 # Globals
 max_temp = 0
@@ -14,13 +15,14 @@ def generate(s1, s2=None, s3=None, s4=None):
     else:
         sys.stdout.write("%s" % s1)
 
-def extract_sem(sem_rec):
-    if sem_rec is ExprRec:
+def extract_sem(s):
+    rec = sem_rec(s)
+    if rec is ExprRec:
         return extract(sem_rec)
-    elif sem_rec is OpRec:
+    elif rec is OpRec:
         return extract_op(sem_rec)
     else:
-        raise CompilerError
+        raise SyntaxError
 
 def extract(e):
     if e.name:
