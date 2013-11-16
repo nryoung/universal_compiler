@@ -5,19 +5,19 @@
 <statement> -> <ident> := <expression> ; #Assign(0,2)
 <statement> -> read ( <id_list> ) ;
 <statement> -> write ( <expr_list> ) ;
-<id_list> -> <ident> #ReadId(0) <id_tail>
+<id_list> -> <ident> #Read_Id(0) <id_tail>
 <id_tail> -> , <id_list>
 <id_tail> -> lambda
-<expr_list> -> <expression> #WriteExpr(0) <expr_tail>
+<expr_list> -> <expression> #Write_Expr(0) <expr_tail>
 <expr_tail> -> , <expr_list>
 <expr_tail> -> lambda
 <expression> -> <primary> #Copy(0,1) <primary_tail> #Copy(1,-1)
-<primary_tail> -> <add_op> <expression> #GenInfix(0,1)
+<primary_tail> -> <add_op> <expression> #Gen_Infix(0,1)
 <primary_tail> -> lambda
 <primary> -> ( <expression> ) #Copy(1,-1)
 <primary> -> <ident> #Copy(0,-1)
-<primary> -> IntLiteral #ProcessLiteral()
-<add_op> -> + #ProcessOp()
-<add_op> -> - #ProcessOp()
-<ident> -> Id #ProcessId()
+<primary> -> IntLiteral #Process_Literal()
+<add_op> -> + #Process_Op()
+<add_op> -> - #Process_Op()
+<ident> -> Id #Process_Id()
 <system_goal> -> <program> $ #Finish()
