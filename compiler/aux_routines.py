@@ -2,7 +2,7 @@
 Auxiliary Routines for the universal compiler.
 """
 import sys
-from .compiler.data_structures import OpRec, ExprRec, sem_rec
+from data_structures import OpRec, ExprRec, sem_rec
 
 # Globals
 max_temp = 0
