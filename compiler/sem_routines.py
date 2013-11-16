@@ -13,7 +13,7 @@ def start(symbol_table):
     symbol_table[:] = []
 
 def assign(target, source):
-    generap e("STORE", extract_sem(source), target.name)
+    generate("STORE", extract_sem(source), target.name)
 
 def read_id(invar):
     generate("READ", invar.name, "Integer")
