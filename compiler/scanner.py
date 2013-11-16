@@ -124,7 +124,7 @@ class Scanner(object):
                 self.consume_char()
                 if self.token_code == 0:
                     self.scan(self.token_code, token_text)
-                return self.tokens[self.token_code]
+                return (token_text, self.tokens[self.token_code])
 
             elif action == 'HaltNoAppend':
                 self.look_up(state, self.current_char(), self.token_code)
@@ -132,7 +132,7 @@ class Scanner(object):
                 self.consume_char()
                 if self.token_code == 0:
                     self.scan(self.token_code, token_text)
-                return self.tokens[self.token_code]
+                return (token_text, self.tokens[self.token_code])
 
             elif action == 'HaltReuse':
                 self.look_up(state, self.current_char())
@@ -141,5 +141,5 @@ class Scanner(object):
                     self.scan(self.token_code, token_text)
                 elif self.token_code == -1:
                     # return the reserved word symbol found
-                    return self.reserved_words[token_text]
-                return self.tokens[self.token_code]
+                    return (token_text, self.reserved_words[token_text])
+                return (token_text, self.tokens[self.token_code])
