@@ -66,10 +66,10 @@ class Parser(object):
         # push start symbol on both stacks
         self.stack.append(self.start_sym)
         self.ss_stack.append(self.start_sym)
-        left_idx = 0
-        right_idx = 0
-        current_idx = 0
-        top_idx = 1
+        self.left_idx = 0
+        self.right_idx = 0
+        self.current_idx = 0
+        self.top_idx = 1
 
         # now we start our loop
         while self.stack:
@@ -86,7 +86,7 @@ class Parser(object):
                 self.stack.pop()
                 continue
 
-            self._display_compile((left_idx, right_idx, current_idx, top_idx))
+            self._display_compile((self.left_idx, self.right_idx, self.current_idx, self.top_idx))
             # X is a non-terminal we have to process it
             if X in self.pg.ga.get_non_terminals():
                 col = self.rev_tk_mapping[a]
@@ -94,7 +94,7 @@ class Parser(object):
 
                 self.stack.pop()
                 # Push EOP, a tuple in this case, on to the parse stack
-                self.stack.append((left_idx, right_idx, current_idx, top_idx))
+                self.stack.append((self.left_idx, self.right_idx, self.current_idx, self.top_idx))
 
                 # Now we need to grab the prodcutions Y_m...Y_1 and push them on
                 # both stacks.
@@ -118,10 +118,10 @@ class Parser(object):
                     # Push everything on the Parse stack
                     self.stack.append(x)
 
-                left_idx = current_idx
-                right_idx = top_idx
-                current_idx = right_idx
-                top_idx = top_idx + (len(new_X) - 1)
+                self.left_idx = self.current_idx
+                self.right_idx = self.top_idx
+                self.current_idx = self.right_idx
+                self.top_idx = self.top_idx + (len(new_X) - 1)
 
 
 
@@ -129,10 +129,10 @@ class Parser(object):
             elif X in self.pg.ga.get_terminals():
                 print "Terminal"
                 if X == self.rev_tk_mapping[a]:
-                    self.ss_stack[current_idx] = token_text
+                    self.ss_stack[self.current_idx] = token_text
                     self.stack.pop()
                     token_text, a = self.scanner.scan()
-                    current_idx += 1
+                    self.current_idx += 1
                 else:
                     print "In second else, where it is a terminal and not matched"
                     raise SyntaxError(a)
@@ -140,12 +140,12 @@ class Parser(object):
             # X is EOP
             elif type(X) == tuple:
                 print "EOP"
-                left_idx = X[0]
-                right_idx = X[1]
-                current_idx = X[2]
-                top_idx = X[3]
+                self.left_idx = X[0]
+                self.right_idx = X[1]
+                self.current_idx = X[2]
+                self.top_idx = X[3]
 
-                current_idx += 1
+                self.current_idx += 1
 
                 self.stack.pop()
 
