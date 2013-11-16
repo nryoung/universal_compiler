@@ -107,9 +107,7 @@ class Parser(object):
                     raise SyntaxError(a)
 
     def ll_compiler(self):
-        # Note, somehow ge the value of:
-        # LeftIndex, RightIndex, CurrentIndex, TopIndex
-        a = self.scanner.scan()
+        token_text, a = self.scanner.scan()
 
         # push start symbol on both stacks
         self.stack.append(self.start_sym)
@@ -124,10 +122,10 @@ class Parser(object):
             X = self.stack[-1]
 
             print "X: %s" % str(X)
-            print "a: %s" % a
+            print "a: ", a
 
             if a == 'EmptySpace' or a == 'Comment':
-                a = self.scanner.scan()
+                token_text, a = self.scanner.scan()
                 continue
 
             if X == 'lambda':
@@ -137,12 +135,8 @@ class Parser(object):
             self._display_compile((left_idx, right_idx, current_idx, top_idx))
             # X is a non-terminal we have to process it
             if X in self.pg.ga.get_non_terminals():
-                print "Non Terminals"
                 col = self.rev_tk_mapping[a]
-                print "Col: %s" % col
-                print self.pg.col_matching
                 col_num = self.pg.col_matching[col]
-                print "Col_num: %s" % col_num
 
                 self.stack.pop()
                 # Push EOP, a tuple in this case, on to the parse stack
@@ -181,9 +175,9 @@ class Parser(object):
             elif X in self.pg.ga.get_terminals():
                 print "Terminal"
                 if X == self.rev_tk_mapping[a]:
-                    self.ss_stack[current_idx] = '[%s]' % self.rev_tk_mapping[a]
+                    self.ss_stack[current_idx] = token_text
                     self.stack.pop()
-                    a = self.scanner.scan()
+                    token_text, a = self.scanner.scan()
                     current_idx += 1
                 else:
                     print "In second else, where it is a terminal and not matched"
