@@ -25,10 +25,24 @@ class OpRec(object):
         else:
             self._op = o
 
+    def __str__(self):
+        return "OpRec('%s')" % self.op
+
+    def __repr__(self):
+        return "OpRec('%s')" % self.op
+
+
 class ExprRec(object):
 
     def __init__(self, val):
         self.val = val
+
+    def __str__(self):
+        return "ExprRec('%s')" % self.val
+
+    def __repr__(self):
+        return "ExprRec('%s')" % self.val
+
 
 
 def sem_rec(s):
