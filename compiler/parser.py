@@ -168,7 +168,19 @@ class Parser(object):
 
     # All of the semantic routine start here
     def start(self):
+        pass
+
+    def begin(self):
         self.scope_num += 1
+        self.generate("BEGIN\n")
+
+    def end(self):
+        for l in self.symbol_table:
+            for sym, scope in l:
+                if scope == self.scope_num:
+                    l.pop()
+        self.scope_num -= 1
+        self.generate("END\n")
 
     def assign(self, target, source):
         self.generate("STORE", 
@@ -248,11 +260,8 @@ class Parser(object):
 
     def enter(self, s):
         idx = self.hash_entry(s)
-        print "hash val: %s" % idx
-        print "Value at idx: %s" % self.symbol_table[idx]
         entry = self.symbol_table[idx]
         entry.append((s, self.scope_num))
-        #self.symbol_table.append(s)
 
     def check_id(self, s):
         if not self.look_up(s):

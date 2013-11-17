@@ -1,0 +1,22 @@
+BEGIN -- scope #1
+READ(X1, Y1, Z1);
+SQ := X1 - Y1 + Z1;
+BEGIN -- scope #2
+READ(SQ, R, Y2);
+L := SQ + R + Y2;
+BEGIN -- scope #3
+C := 10 - 11;
+BEGIN -- scope #4
+READ(X1, Y1, Z1);
+NewX := X1 - Y1 - Z1;
+BEGIN -- scope #5
+A1 := B1 - B2;
+BEGIN --scope #6
+READ(X1, Y1, Z1);
+WRITE(X1, Y1 - Z1);
+END
+END
+END
+END
+END
+END$

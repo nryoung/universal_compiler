@@ -1,10 +1,11 @@
-<program> -> #Start() begin <stmt_list> end
+<program> -> #Start() begin #Begin() <stmt_list> end #End()
 <stmt_list> -> <statement> <stmt_tail>
 <stmt_tail> -> <stmt_list>
 <stmt_tail> -> lambda
 <statement> -> <ident> := <expression> ; #Assign(0,2)
 <statement> -> read ( <id_list> ) ;
 <statement> -> write ( <expr_list> ) ;
+<statement> -> begin #Begin() <stmt_list> end #End()
 <id_list> -> <ident> #Read_Id(0) <id_tail>
 <id_tail> -> , <id_list>
 <id_tail> -> lambda
