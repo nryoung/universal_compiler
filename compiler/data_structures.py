@@ -27,45 +27,15 @@ class OpRec(object):
 
 class ExprRec(object):
 
-    def __init__(self, expr=None, literal=None):
-        if literal:
-            self.val = expr
-        else:
-            self.name = expr
+    def __init__(self, val):
+        self.val = val
 
-    @property
-    def val(self):
-        return self._val
 
-    @val.setter
-    def val(self, expr):
-        try:
-            v = int(expr)
-        except ValueError:
-            raise LiteralError("Invalid invalid literal with base 10: '%s'" % expr)
-        else:
-            self._val = v
-
-    @property
-    def name(self):
-        return self._name
-
-    @name.setter
-    def name(self, expr):
-        try:
-            n = int(expr)
-        except (ValueError, TypeError):
-            self._name = expr
-        else:
-            raise IdError("Invalid Id name: '%s'" % expr)
-
-def sem_rec(s, e=None, l=None):
+def sem_rec(s):
     op_rec_vals = ('-', '+', None)
     if s in op_rec_vals:
         return OpRec(s)
-    elif e:
-        return ExprRec(s, expr=e)
-    elif l:
-        return ExprRec(s, literal=l)
+    elif s.isdigit():
+        return ExprRec(int(s))
     else:
-        raise SyntaxError(s)
+        return ExprRec(s)

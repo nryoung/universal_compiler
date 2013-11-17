@@ -4,6 +4,7 @@ Parser implementation.
 from .scanner import Scanner
 from .predict_generator import PredictGenerator
 from .compiler_errors import SyntaxError
+from .data_structures import sem_rec, ExprRec, OpRec
 
 class Parser(object):
 
@@ -14,6 +15,10 @@ class Parser(object):
         self.stack = []
         self.ss_stack = []
         self.gen_code = ''
+
+        self.symbol_table = []
+        self.temp_count = 0
+
         self.pg.generate_predict_table(self.start_sym)
 
         self.rev_tk_mapping = { 'Id': 'Id', 'IntLiteral': 'IntLiteral', 'PlusOp': '+',
@@ -129,7 +134,12 @@ class Parser(object):
             elif X in self.pg.ga.get_terminals():
                 print "Terminal"
                 if X == self.rev_tk_mapping[a]:
-                    self.ss_stack[self.current_idx] = token_text
+
+                    if token_text.isdigit():
+                        self.ss_stack[self.current_idx] = sem_rec(token_text)
+                    else:
+                        self.ss_stack[self.current_idx] = sem_rec(token_text)
+
                     self.stack.pop()
                     token_text, a = self.scanner.scan()
                     self.current_idx += 1
@@ -161,84 +171,91 @@ class Parser(object):
         pass
 
     def assign(self, target, source):
-        generate("STORE", extract_sem(source), target.name)
+        self.generate("STORE", 
+                      self.extract_sem(self.ss_stack[self.right_idx + source]),
+                      self.extract_sem(self.ss_stack[self.right_idx + target]))
 
     def read_id(self, invar):
-        generate("READ", invar.name, "Integer")
+        self.generate("READ", self.extract_sem(self.ss_stack[self.right_idx + invar]), "Integer")
 
-    def write_expr(self, outexpr):
-        generate("WRITE", extract_sem(outexpr), "Integer")
+    def write_expr(self, e):
+        self.generate("WRITE",
+                      self.extract_sem(self.ss_stack[self.right_idx + e]),
+                      "Integer")
 
-    def gen_infix(self, e1, op, e2, symbol_table):
-        temp_expr = ExprRec(get_temp(symbol_table))
-        generate(extract_sem(op), extract_sem(e1), extract_sem(e2), temp_expr.name)
-        return temp_expr
+    def gen_infix(self, op, e):
+        sr = sem_rec(self.get_temp())
+        self.generate(self.extract_sem(self.ss_stack[self.right_idx + op]),
+                      self.extract_sem(self.ss_stack[self.left_idx]),
+                      self.extract_sem(self.ss_stack[self.right_idx + e]),
+                      self.extract_sem(sr))
+        self.ss_stack[self.left_idx] = sr
 
     def process_id(self):
-        ### See how this is used before editing
-        check_id(token_buffer, symbol_table)
-        e.name = token_buffer
+        self.check_id(self.extract_sem(self.ss_stack[self.current_idx - 1]))
+        self.ss_stack[self.left_idx] = sem_rec(self.extract_sem(self.ss_stack[self.current_idx - 1]))
 
-    def proc_literal(self, e, token_buffer):
-        ### See how this is used before editing
-        # mocking token buffer here too
-        e.val = int(token_buffer)
+    def process_literal(self):
+        self.check_id(self.extract_sem(self.ss_stack[self.current_idx - 1]))
+        self.ss_stack[self.left_idx] = self.ss_stack[self.current_idx - 1]
 
-    def process_op(self, o, current_token):
-        # mocking current token
-        o.op = current_token
+    def process_op(self):
+        self.ss_stack[self.left_idx] = self.ss_stack[self.current_idx -1]
+
+    def copy(self, source, target):
+        if target == -1:
+            self.ss_stack[self.left_idx] = self.ss_stack[self.right_idx + source]
+        else:
+            self.ss_stack[self.right_idx + target] = self.ss_stack[self.right_idx + source]
 
     def finish(self):
-        generate("HALT")
+        self.generate("HALT")
 
     # All of the aux routines
-    def generate(s1, s2=None, s3=None, s4=None):
+    def generate(self, s1, s2=None, s3=None, s4=None):
         if s4:
-            sys.stdout.write("%s %s, %s, %s\n" % (s1, s2, s3, s4))
+            self.gen_code += "%s %s, %s, %s\n" % (s1, s2, s3, s4)
         elif s3:
-            sys.stdout.write("%s %s, %s\n" % (s1, s2, s3))
+            self.gen_code += "%s %s, %s\n" % (s1, s2, s3)
         else:
-            sys.stdout.write("%s" % s1)
+            self.gen_code += "%s" % s1
 
-    def extract_sem(s):
-        rec = sem_rec(s)
-        if rec is ExprRec:
-            return extract(sem_rec)
-        elif rec is OpRec:
-            return extract_op(sem_rec)
+    def extract_sem(self, rec):
+        print "Rec is: %s" % rec
+        if type(rec) == ExprRec:
+            return self.extract(rec)
+        elif type(rec) == OpRec:
+            return self.extract_op(rec)
         else:
             raise SyntaxError
 
-    def extract(e):
-        if e.name:
-            return str(e.name)
-        else:
-            return int(e.val)
+    def extract(self, e):
+        return e.val
 
-    def extract_op(o):
+    def extract_op(self, o):
         if o.op == "+":
             return "ADD"
         else:
             return "SUB"
 
-    def look_up(s, symbol_table):
-        if s in symbol_table:
+    def look_up(self, s):
+        if s in self.symbol_table:
             return  True
         else:
             return False
 
-    def enter(s, symbol_table):
-        symbol_table.append(s)
+    def enter(self, s):
+        self.symbol_table.append(s)
 
-    def check_id(s, symbol_table):
-        if not look_up(s, symbol_table):
-            enter(s, symbol_table)
-            generate("DECLARE", s, "Integer")
+    def check_id(self, s):
+        if not self.look_up(s):
+            self.enter(s)
+            self.generate("DECLARE", s, "Integer")
 
-    def get_temp(symbol_table):
-        global max_temp
-        max_temp += 1
+    def get_temp(self):
+        self.temp_count += 1
+        return "Temp&%s" % self.temp_count
 
         temp_name = "Temp&%s" % max_temp
-        check_id(temp_name, symbol_table)
+        check_id(temp_name)
         return temp_name
