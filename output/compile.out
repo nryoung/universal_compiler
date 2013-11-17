@@ -1,0 +1,27 @@
+DECLARE A1, Integer
+READ A1, Integer
+DECLARE New_A, Integer
+READ New_A, Integer
+DECLARE D, Integer
+READ D, Integer
+DECLARE B, Integer
+READ B, Integer
+DECLARE C, Integer
+SUB New_A, D, Temp&1
+DECLARE 75, Integer
+SUB Temp&1, 75, Temp&2
+ADD A1, Temp&2, Temp&3
+STORE Temp&3, C
+DECLARE New_C, Integer
+DECLARE 7, Integer
+ADD C, D, Temp&4
+ADD 7, Temp&4, Temp&5
+SUB B, Temp&5, Temp&6
+DECLARE 3, Integer
+SUB 3, A1, Temp&7
+SUB Temp&6, Temp&7, Temp&8
+STORE Temp&8, New_C
+WRITE C, Integer
+ADD A1, New_C, Temp&9
+WRITE Temp&9, Integer
+HALT
