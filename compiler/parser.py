@@ -17,7 +17,8 @@ class Parser(object):
         self.gen_code = ''
         self.output = output
 
-        self.symbol_table = []
+        self.symbol_table = [[] for x in xrange(24)]
+        self.scope_num = 0
         self.temp_count = 0
 
         self.pg.generate_predict_table(self.start_sym)
@@ -59,6 +60,8 @@ class Parser(object):
         print self.gen_code
         print "Indices:"
         print "(%s, %s, %s, %s)" % (idx[0], idx[1], idx[2], idx[3])
+        print "Symbol Table:"
+        print self.symbol_table
         print '-' * 80
 
     def _call_action(self, X):
@@ -165,7 +168,7 @@ class Parser(object):
 
     # All of the semantic routine start here
     def start(self):
-        pass
+        self.scope_num += 1
 
     def assign(self, target, source):
         self.generate("STORE", 
@@ -235,13 +238,21 @@ class Parser(object):
             return "SUB"
 
     def look_up(self, s):
-        if s in self.symbol_table:
-            return  True
-        else:
-            return False
+        for l in self.symbol_table:
+            try:
+                if l[-1] == (s, self.scope_num):
+                    return True
+            except IndexError:
+                continue
+        return False
 
     def enter(self, s):
-        self.symbol_table.append(s)
+        idx = self.hash_entry(s)
+        print "hash val: %s" % idx
+        print "Value at idx: %s" % self.symbol_table[idx]
+        entry = self.symbol_table[idx]
+        entry.append((s, self.scope_num))
+        #self.symbol_table.append(s)
 
     def check_id(self, s):
         if not self.look_up(s):
@@ -255,3 +266,16 @@ class Parser(object):
         temp_name = "Temp&%s" % max_temp
         check_id(temp_name)
         return temp_name
+
+    def hash_entry(self, s):
+        if type(s) == int:
+            return s % 24
+        s = s.lower()
+        sum = 0
+        for c in s:
+            if c.isdigit():
+                sum += ord(c) - 48
+            else:
+                sum += ord(c) - 96
+
+        return sum % 24
