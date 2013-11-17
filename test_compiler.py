@@ -5,11 +5,11 @@ Depending on cmd line arguments it will run specific tests.
 import argparse
 import traceback
 
-def test_compile(program, grammar, start_sym):
+def test_compile(program, grammar, start_sym, out):
     from compiler.parser import Parser
 
     try:
-        p = Parser(program, grammar, start_sym)
+        p = Parser(program, grammar, start_sym, out)
         p.ll_compiler()
     except:
         print traceback.format_exc()
@@ -93,6 +93,11 @@ if __name__ == '__main__':
                         default='<system_goal>',
                         help='Name of start symbol for follow sets.')
 
+    parser.add_argument('--out', type=str,
+                        default='output/compile.out',
+                        help='name of output compile file')
+
+
     args = parser.parse_args()
 
     # Run the specific test depending on the args passed in
@@ -107,6 +112,6 @@ if __name__ == '__main__':
     elif args.test_type == 'parser_driver':
         test_parser_driver(args.in_file, args.grammar, args.start_sym)
     elif args.test_type == 'compile':
-        test_compile(args.in_file, args.grammar, args.start_sym)
+        test_compile(args.in_file, args.grammar, args.start_sym, args.out)
     else:
         parser.print_help()

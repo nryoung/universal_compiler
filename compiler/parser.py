@@ -8,13 +8,14 @@ from .data_structures import sem_rec, ExprRec, OpRec
 
 class Parser(object):
 
-    def __init__(self, program, grammar, start_sym):
+    def __init__(self, program, grammar, start_sym, output):
         self.scanner = Scanner(program)
         self.pg = PredictGenerator(grammar)
         self.start_sym = start_sym
         self.stack = []
         self.ss_stack = []
         self.gen_code = ''
+        self.output = output
 
         self.symbol_table = []
         self.temp_count = 0
@@ -156,6 +157,10 @@ class Parser(object):
             else:
                 self.stack.pop()
                 self._call_action(X)
+
+        #finally write to a file
+        with open(self.output, 'w') as f:
+            f.write(self.gen_code)
 
 
     # All of the semantic routine start here
