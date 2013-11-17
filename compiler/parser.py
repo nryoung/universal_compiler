@@ -80,8 +80,6 @@ class Parser(object):
         while self.stack:
             X = self.stack[-1]
 
-            print "X: %s" % str(X)
-            print "a: ", a
 
             if a == 'EmptySpace' or a == 'Comment':
                 token_text, a = self.scanner.scan()
@@ -112,8 +110,6 @@ class Parser(object):
                             new_X = self.pg.ga.productions[row[col_num] - 1]
                             new_X = self.pg.ga.get_rhs(new_X, action=True)
                         else:
-                            print "X: %s" % X
-                            print "In first else, where it is a non term and not matched."
                             raise SyntaxError(a)
 
                 for x in new_X[::-1]:
@@ -132,7 +128,6 @@ class Parser(object):
 
             # X is terminal
             elif X in self.pg.ga.get_terminals():
-                print "Terminal"
                 if X == self.rev_tk_mapping[a]:
 
                     if token_text.isdigit():
@@ -144,12 +139,10 @@ class Parser(object):
                     token_text, a = self.scanner.scan()
                     self.current_idx += 1
                 else:
-                    print "In second else, where it is a terminal and not matched"
                     raise SyntaxError(a)
 
             # X is EOP
             elif type(X) == tuple:
-                print "EOP"
                 self.left_idx = X[0]
                 self.right_idx = X[1]
                 self.current_idx = X[2]
@@ -161,7 +154,6 @@ class Parser(object):
 
             # X is action symbol
             else:
-                print "X is action symbol: %s" % X
                 self.stack.pop()
                 self._call_action(X)
 
@@ -221,7 +213,6 @@ class Parser(object):
             self.gen_code += "%s" % s1
 
     def extract_sem(self, rec):
-        print "Rec is: %s" % rec
         if type(rec) == ExprRec:
             return self.extract(rec)
         elif type(rec) == OpRec:
