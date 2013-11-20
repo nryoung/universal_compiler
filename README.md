@@ -16,7 +16,7 @@ Test Compile:
 - If `--grammar` is not specified it will default to the productions contained at `ext/compile_grammar`
 - If `--start_sym` is not specified it will default to `<system_goal>`
 - If `--out` is not specified it will default to `ouput/compile.out`
-- Prints out status of Compiler as it consumes the input, including the parse stack, semantic stack, remaining input, and generated code.
+- Prints out status of Compiler as it consumes the input, including the parse stack, semantic stack, remaining input, symbol table and generated code.
 - NOTE: you may want to pipe the output of this command to `less`
 
 Example Compile command:
